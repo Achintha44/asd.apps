@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All by Achiya</title>
+    <style>
+        body {
+            font-family: comic sans ms, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #121212; /* Dark Background */
+            color: #ffffff; /* Light Text */
+        }
+        h1 {
+            color: #ffffff; /* Light Heading Text */
+        }
+        .top-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .top-button:hover {
+            background-color: #0056b3;
+        }
+        form, div {
+            background: #1e1e1e; /* Dark Form Background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #bbbbbb; /* Soft Text Color */
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #444; /* Dark Borders */
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #262626; /* Input Background */
+            color: #ffffff; /* Input Text */
+        }
+        button {
+            background-color: #007bff; /* Button Blue */
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #otp-section input {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button class="top-button" onclick="showUploadForm()">Upload Files</button>
+
+    <h1>All by Achiya: Enter File ID to Continue</h1>
+    <form id="otp-form">
+        <label for="file-id">Enter File ID:</label>
+        <input type="text" id="file-id" placeholder="File ID" required>
+        <button type="button" onclick="generateOtp()">Generate OTP</button>
+    </form>
+
+    <div id="otp-section" style="display:none;">
+        <label for="otp">Enter OTP:</label>
+        <input type="text" id="otp" placeholder="Enter OTP" required>
+        <button type="button" onclick="validateOtp()">Go To Download File</button>
+        <div id="otp-display">
+            <label for="otp-code">Generated OTP:</label>
+            <input type="text" id="otp-code" readonly>
+            <button type="button" onclick="copyOtp()">Copy OTP Code </button>
+            <button type="button" onclick="asd">All By Achintha Shehan </button>
+        </div>
+    </div>
+
+    <!-- Upload File Form (Hidden by default) -->
+    <div id="upload-section" style="display:none;">
+        <h2>Upload Your APK File</h2>
+        <div id="passwordForm">
+            <label for="password">Enter Secret Password:</label>
+            <input type="password" id="password" placeholder="Enter password"><br><br>
+            <button type="button" onclick="checkPassword()">Submit</button>
+            <div id="error"></div>
+        </div>
+
+        <div id="fileUploadForm" style="display:none;">
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <label for="file">Choose APK file:</label>
+                <input type="file" id="file" name="file" required><br><br>
+                <button type="submit">Upload File</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Variable to store OTP in memory (for demo purposes)
+        let otpStore = {};
+
+        // Function to show the upload form when the "Upload Files" button is clicked
+        function showUploadForm() {
+            document.getElementById('upload-section').style.display = 'block';
+        }
+
+        // Function to generate OTP
+        function generateOtp() {
+            const fileId = document.getElementById('file-id').value;
+            if (!fileId) {
+                alert("Please enter a valid File ID");
+                return;
+            }
+
+            // Generate a 48-digit random OTP
+            const otp = Math.random().toString(36).substr(2, 48).toUpperCase();
+
+            // Store OTP in the otpStore object with the file ID
+            otpStore[fileId] = otp;
+
+            // Display OTP and show OTP input section
+            document.getElementById('otp-code').value = otp;  // Display OTP in the input field
+            document.getElementById('otp-section').style.display = 'block';
+        }
+
+        // Function to copy OTP to clipboard
+        function copyOtp() {
+            const otpField = document.getElementById('otp-code');
+            otpField.select();
+            otpField.setSelectionRange(0, 99999);  // For mobile devices
+
+            // Copy the text inside the input field
+            document.execCommand("copy");
+            alert("OTP copied to clipboard!");
+        }
+
+        // Function to validate OTP entered by the user
+        function validateOtp() {
+            const fileId = document.getElementById('file-id').value;
+            const enteredOtp = document.getElementById('otp').value;
+
+            // Check if OTP matches stored OTP
+            if (otpStore[fileId] && otpStore[fileId] === enteredOtp) {
+                alert("OTP validated successfully! You can download the file.");
+                // Replace the following with the actual download link for the file
+                window.location.href = 'https://www.mediafire.com/file/' + fileId + 'file'; // Simulated download link
+            } else {
+                alert("Invalid or expired OTP");
+            }
+        }
+
+        const correctPassword = '3877647Achiya';  // Your password
+        const passwordForm = document.getElementById('passwordForm');
+        const fileUploadForm = document.getElementById('fileUploadForm');
+        const errorMessage = document.getElementById('error');
+
+        // Function to check password
+        function checkPassword() {
+            const enteredPassword = document.getElementById('password').value;
+
+            if (enteredPassword === correctPassword) {
+                passwordForm.style.display = 'none';  // Hide password form
+                fileUploadForm.style.display = 'block';  // Show file upload form
+            } else {
+                errorMessage.textContent = 'Incorrect password. Please try again.';
+            }
+        }
+    </script>
+
+<a href="upload.html"> <img src="NEW2.png"  width="450" > </a>
+</body>
+</html>
